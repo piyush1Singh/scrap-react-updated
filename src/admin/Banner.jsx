@@ -278,7 +278,7 @@ const Banner = () => {
                   <td>{value[2]}</td>
                   <td>
                     <img
-                      className="banner-img"
+                      className="img-50"
                       src={"/src/assets/bannerImages/" + value[3]}
                       alt=""
                     />

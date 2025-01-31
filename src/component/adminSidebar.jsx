@@ -8,13 +8,13 @@ const Sidebar = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("Login");
     localStorage.removeItem("user_id");
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   useEffect(() => {
     const isLogin = localStorage.getItem("Login");
     if (!isLogin) {
-      navigate("/login");
+      navigate("/admin/login");
     }
   }, [navigate]);
 
@@ -22,7 +22,7 @@ const Sidebar = ({ children }) => {
     <div>
       <nav className="navbar navbar-expand-lg bg-dark navbar-dark">
         <div className="container-fluid">
-          <Link className="navbar-brand" to="/">
+          <Link className="navbar-brand" to="/admin/">
             Scrap
           </Link>
           <button
@@ -41,7 +41,7 @@ const Sidebar = ({ children }) => {
               <li className="nav-item">
                 <NavLink
                   className="nav-link"
-                  to="/"
+                  to="/admin/ "
                   end
                   activeClassName="active"
                 >
@@ -49,22 +49,22 @@ const Sidebar = ({ children }) => {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/product" activeClassName="active">
+              <NavLink className="nav-link" to="/admin/product" activeClassName="active">
                   Product
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/category" activeClassName="active">
+                <NavLink className="nav-link" to="/admin/category" activeClassName="active">
                   Category
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/banner" activeClassName="active">
+                <NavLink className="nav-link" to="/admin/banner" activeClassName="active">
                   Banner
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/collection" activeClassName="active">
+                <NavLink className="nav-link" to="/admin/collection" activeClassName="active">
                   Collection
                 </NavLink>
               </li>

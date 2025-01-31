@@ -9,10 +9,11 @@ const Login = () => {
   const [result, setResult] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("Login")) {
-      navigate("/");
+    // Check if the user is already logged in
+    if (localStorage.getItem("Login") === "true") {
+      navigate("/admin/dashboard");  // Redirect to the dashboard or a specific admin page
     }
-  }, []);
+  }, [navigate]);
 
   const [registerEmailState, setRegisterEmailState] = useState("");
   const [registerPasswordState, setRegisterPasswordState] = useState("");
@@ -54,9 +55,9 @@ const Login = () => {
     let data = await url.json();
     if (data["status"]) {
       localStorage.setItem("user_id", data["user_id"]);
-      localStorage.setItem("Login", true);
+      localStorage.setItem("Login", "true"); // Make sure to store 'true' to indicate login
       setResult("Successfully Logged In");
-      navigate("/");
+      navigate("/admin/dashboard"); // Redirect to admin dashboard
     } else {
       setResult("Email or Password Invalid");
     }
@@ -65,12 +66,11 @@ const Login = () => {
   return (
     <div className="container-fluid p-0">
       <Tabs selectedIndex={selectedTab} onSelect={(index) => setSelectedTab(index)}>
-        {/* <TabList>
+        <TabList>
           <Tab>Login</Tab>
           <Tab>Register</Tab>
-        </TabList> */}
+        </TabList>
 
-        {/* Login Panel */}
         <TabPanel>
           <div className="login-card login-dark">
             <div className="row m-0">
@@ -79,7 +79,7 @@ const Login = () => {
                   <form className="theme-form" onSubmit={SubmitLogin}>
                     <h4>Sign in to your account</h4>
                     <p>Enter your email & password to login</p>
-                    
+
                     <div className="form-group">
                       <label className="col-form-label">Email Address</label>
                       <input
@@ -108,11 +108,19 @@ const Login = () => {
                       </button>
                     </div>
 
-                    <div className="text-danger">{result}</div>
+                    {result && (
+                      <div className={`text-${result.includes("Invalid") ? "danger" : "success"}`}>
+                        {result}
+                      </div>
+                    )}
 
                     <p className="mt-4 mb-0 text-center">
                       Don't have an account?{" "}
-                      <span className="ms-2 text-primary" style={{ cursor: "pointer" }} onClick={() => setSelectedTab(1)}>
+                      <span
+                        className="ms-2 text-primary"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setSelectedTab(1)}
+                      >
                         Create Account
                       </span>
                     </p>
@@ -123,7 +131,6 @@ const Login = () => {
           </div>
         </TabPanel>
 
-        {/* Register Panel */}
         <TabPanel>
           <div className="login-card login-dark">
             <div className="row m-0">
@@ -156,16 +163,24 @@ const Login = () => {
                     </div>
 
                     <div className="text-end mt-3">
-                      <button className="btn btn-primary btn-block w-100" type="button" onClick={registerLogin}>
+                      <button className="btn btn-primary btn-block w-100" type="submit" onClick={registerLogin}>
                         Register
                       </button>
                     </div>
 
-                    <div className="text-danger">{result}</div>
+                    {result && (
+                      <div className={`text-${result.includes("Invalid") ? "danger" : "success"}`}>
+                        {result}
+                      </div>
+                    )}
 
                     <p className="mt-4 mb-0 text-center">
                       Already have an account?{" "}
-                      <span className="ms-2 text-primary" style={{ cursor: "pointer" }} onClick={() => setSelectedTab(0)}>
+                      <span
+                        className="ms-2 text-primary"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setSelectedTab(0)}
+                      >
                         Login
                       </span>
                     </p>

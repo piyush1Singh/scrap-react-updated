@@ -4,35 +4,25 @@ import Index from "./Index";
 import "../index.css";
 import CategoryProvider from "../CategoryContext";
 import CategoryProduct from "./CategoryProduct";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom"; // Import Routes, Route, and Outlet
 import ProductDescription from "../component/ProductDescription";
 import CartProvider from "../CartContext";
 import Checkout from "../component/Checkout";
 
-const userDashboard = () => {
+const UserDashboard = () => {
   return (
     <CartProvider>
       <CategoryProvider>
-   
-          {/* This `Route` component defines a path "/categories/:id", where
-          ":id" represents a dynamic parameter. It associates this path with the
-          `CategoryProduct` component, which will be rendered when the path
-          matches. */}
-     <CategoryProduct />
-
-       <Index />
-
-       <Checkout />
-
-        <ProductDescription />
-          {/*  This `Route` component defines a path "/product/:id", where ":id"
-          represents a dynamic parameter. It associates this path with the
-          `ProductDescription` component, which will be rendered when the path
-          matches. */}
-        
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/categories/:id" element={<CategoryProduct />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/product/:id" element={<ProductDescription />} />
+        </Routes>
+        <Outlet /> {/* This renders nested child routes if needed */}
       </CategoryProvider>
     </CartProvider>
   );
 };
 
-export default userDashboard;
+export default UserDashboard;

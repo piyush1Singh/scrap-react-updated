@@ -9,18 +9,13 @@ import Banner from "../admin/Banner";
 import FeaturedCollection from "../admin/FeaturedCollection";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import Sidebar from "../component/adminSidebar";
 
 function AdminDashboard() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/product" element={<Product />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/category" element={<Category />} />
-        <Route path="/banner" element={<Banner />} />
-        <Route path="/collection" element={<FeaturedCollection />} />
-      </Routes>
+
+      <Dashboard />
 
       <ToastContainer
         position="top-right"

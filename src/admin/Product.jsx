@@ -343,7 +343,7 @@ const Product = () => {
                   <td>
                     <img
                       className="img-50 me-2"
-                      src={"src/assets/productImages/" + value[3]}
+                      src={"../assets/productImages/" + value[3]}
                     ></img>
                   </td>
                   <td>{value[4]}</td>
@@ -511,7 +511,7 @@ const Product = () => {
       <div className="form-group mb-3">
         <label className="form-label">Image</label>
         <input
-          type="text"
+          type="file"
           className="form-control"
           onChange={handleProductImg}
         />

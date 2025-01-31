@@ -49,7 +49,7 @@ const Sidebar = ({ children }) => {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/product" activeClassName="active">
+                <NavLink className="nav-link" to="/admin/product" activeClassName="active">
                   Product
                 </NavLink>
               </li>
