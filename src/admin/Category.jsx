@@ -302,7 +302,7 @@ const Category = () => {
                   <td>
                     <img
                       className="img-50 me-2"
-                      src={"src/assets/categoriesImages/" + value[3]}
+                      src={"../src/assets/categoriesImages/" + value[3]}
                       alt=""
                     />
                   </td>

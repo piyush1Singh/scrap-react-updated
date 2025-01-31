@@ -16,13 +16,13 @@ if (($filename == "jpg" || $filename == "png" || $filename == "raw" || $filename
 
     $query  = "INSERT INTO `categories`(`category_name`, `category_desc`, `category_img`, `user_id`, `status`) VALUES ('$category_name','$category_desc','$filename','$user_id','$status')";
 
-    file_put_contents('../../Dashboard-admin/src/assets/categoriesImages/' . $filename, file_get_contents($json->imageDate));
+    file_put_contents('../../../src/assets/categoriesImages/' . $filename, file_get_contents($json->imageDate));
     if (mysqli_query($conn, $query)) {
         $result = ["status" => "success"];
         $row = json_encode($result);
         print_r($row);
     } else {
-        $result = ["status" => "No Id Found"];
+        $result = ["status" => "No Id Found v"];
         $row = json_encode($result);
         print_r($row);
         

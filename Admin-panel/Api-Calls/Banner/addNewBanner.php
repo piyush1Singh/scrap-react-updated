@@ -17,7 +17,7 @@ if (($filename == "jpg" || $filename == "png" || $filename == "raw" || $filename
     $bannerTitle = $json->bannerTitle;
     $bannerStatus = $json->bannerStatus;
     $filename = date("yyymmdhis") . "." . $filename;
-    file_put_contents('../../Dashboard-admin/src/assets/bannerImages/' . $filename, file_get_contents($json->imageData));
+    file_put_contents('../../../src/assets/bannerImages/' . $filename, file_get_contents($json->imageData));
     $query = "INSERT INTO `banner`(`header`, `title`, `image`, `status`) VALUES ('$bannerHeader','$bannerTitle','$filename','$bannerStatus')";
     if (mysqli_query($conn, $query)) {
         $result = ["status" => "success"];

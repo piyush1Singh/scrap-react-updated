@@ -14,7 +14,7 @@ if (($filename == "jpg" || $filename == "png" || $filename == "raw" || $filename
     $filename = date("yyymmdhis") . "." . $filename;
     $collectionStatus = $json->collectionStatus;
 
-    file_put_contents('../../Dashboard-admin/src/assets/collectionImages/' . $filename, file_get_contents($json->imageData));
+    file_put_contents('../../../src/assets/collectionImages/' . $filename, file_get_contents($json->imageData));
     $query = "INSERT INTO `featured_collection`(`f_name`, `f_img`, `f_status`) VALUES ('$collectionHeader','$filename','$collectionStatus')";
     if (mysqli_query($conn, $query)) {
         $result = ["status" => "success"];

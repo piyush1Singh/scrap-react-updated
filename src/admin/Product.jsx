@@ -343,7 +343,7 @@ const Product = () => {
                   <td>
                     <img
                       className="img-50 me-2"
-                      src={"../assets/productImages/" + value[3]}
+                      src={"../src/assets/productImages/" + value[3]}
                     ></img>
                   </td>
                   <td>{value[4]}</td>

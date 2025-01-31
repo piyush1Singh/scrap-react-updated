@@ -114,7 +114,7 @@ const Login = () => {
                       </div>
                     )}
 
-                    <p className="mt-4 mb-0 text-center">
+                    {/* <p className="mt-4 mb-0 text-center">
                       Don't have an account?{" "}
                       <span
                         className="ms-2 text-primary"
@@ -123,7 +123,7 @@ const Login = () => {
                       >
                         Create Account
                       </span>
-                    </p>
+                    </p> */}
                   </form>
                 </div>
               </div>
