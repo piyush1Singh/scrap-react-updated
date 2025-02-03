@@ -9,11 +9,11 @@ $input = json_decode($json);
 $email_id= $input->email;
 $password= $input->password;
 
-$query = "Select * from admin_login Where email = '$email_id' And password = '$password'";
+$query = "Select * from vendor_login Where email = '$email_id' And password = '$password'";
 
 $result = mysqli_query($conn,$query);
 if(mysqli_num_rows($result)==0){
-  $query ="INSERT INTO `admin_login`(`email`, `password`) VALUES ('$email_id','$password')";
+  $query ="INSERT INTO `vendor_login`(`email`, `password`) VALUES ('$email_id','$password')";
 
   if(mysqli_query($conn,$query)){
     $result = ["status"=>true];

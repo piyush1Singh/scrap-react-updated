@@ -16,6 +16,7 @@ const Product = () => {
   const [productCategory, setProductCategory] = useState();
   const [rating, setRating] = useState();
   const [user_id, setUser_id] = useState();
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [fileData, setFileData] = useState("");
   const [fileName, setFileName] = useState("");
@@ -232,29 +233,60 @@ const Product = () => {
 
   const saveEdit = async (e) => {
     e.preventDefault();
-    let url = await fetch(
-      "http://localhost/Scrap-react/Admin-panel/Api-Calls/Product/updateProduct.php",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: productId,
-          productName: productName,
-          productDesc: productDesc,
-          productPrice: productPrice,
-          // productImg: productImg,
-          rating: rating,
-          category: productCategory,
-          status: 1,
-        }),
-      }
-    );
-    let data = await url.json();
+
+    let updatedProduct = {
+      id: productId,
+      productName: productName,
+      productDesc: productDesc,
+      productPrice: productPrice,
+      productImg: productImg, // Existing image filename
+      rating: rating,
+      category: productCategory,
+      status: 1,
+    };
+
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedFile);
+      reader.onloadend = async () => {
+        updatedProduct.imageData = reader.result; // Base64 encoded image
+
+        let url = await fetch(
+          "http://localhost/Scrap-react/Admin-panel/Api-Calls/Product/updateProduct.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedProduct),
+          }
+        );
+
+        let data = await url.json();
+        handleResponse(data);
+      };
+    } else {
+      let url = await fetch(
+        "http://localhost/Scrap-react/Admin-panel/Api-Calls/Product/updateProduct.php",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedProduct),
+        }
+      );
+
+      let data = await url.json();
+      handleResponse(data);
+    }
+  };
+
+  const handleResponse = (data) => {
     handleClose();
     fetchProduct();
-    if (data["status"] == "success") {
+
+    if (data["status"] === "success") {
       toast.success("Edited Product Successfully!", {
         position: "top-right",
         autoClose: 5000,
@@ -308,289 +340,296 @@ const Product = () => {
 
   return (
     <Sidebar>
-    <div className="page-body">
-<div className="container-fluid basic_table">
-            <div className="row " style={{justifyContent: 'center'}}>
-              <div className="col-sm-9">
-                <div className="card" style={{ marginTop: '25px' }}>
-                  <div className="card-header d-flex justify-content-between">
-                    <h4>List Of Product</h4>
+      <div className="page-body">
+        <div className="container-fluid basic_table">
+          <div className="row " style={{ justifyContent: "center" }}>
+            <div className="col-sm-9">
+              <div className="card" style={{ marginTop: "25px" }}>
+                <div className="card-header d-flex justify-content-between">
+                  <h4>List Of Product</h4>
 
-                    <button className="btn btn-primary" onClick={addProduct}>Add Product</button>
-                  </div>
-                  <div className="table-responsive custom-scrollbar">
-                    <table className="table">
-                      <thead>
-                        <tr className="border-bottom-primary">
+                  <button className="btn btn-primary" onClick={addProduct}>
+                    Add Product
+                  </button>
+                </div>
+                <div className="table-responsive custom-scrollbar">
+                  <table className="table">
+                    <thead>
+                      <tr className="border-bottom-primary">
                         <th scope="">Id</th>
-              <th scope="">Product</th>
-              <th scope="">Description</th>
-              <th scope="">Image</th>
-              <th scope="">price</th>
-              <th scope="">category</th>
-              <th scope="">rating</th>
-              <th scope="">Status</th>
-              <th scope="">Action</th>
+                        <th scope="">Product</th>
+                        <th scope="">Description</th>
+                        <th scope="">Image</th>
+                        <th scope="">price</th>
+                        <th scope="">category</th>
+                        <th scope="">rating</th>
+                        <th scope="">Status</th>
+                        <th scope="">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {product.length > 0 ? (
+                        product?.map((value, key) => (
+                          <tr key={key}>
+                            <th scope="row">{value[0]}</th>
+                            <td>{value[1]}</td>
+                            <td>{value[2]}</td>
+                            <td>
+                              <img
+                                className="img-50 me-2"
+                                src={"src/assets/productImages/" + value[3]}
+                              ></img>
+                            </td>
+                            <td>{value[4]}</td>
+                            <td>{value[5]}</td>
+                            <td>{value[6]}</td>
+                            <td key={value[8]}>
+                              {value[8] == 1 ? (
+                                <button
+                                  className="btn btn-success"
+                                  onClick={(e) =>
+                                    updateProductStatus(e, 0, value[0])
+                                  }
+                                >
+                                  Active
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={(e) =>
+                                    updateProductStatus(e, 1, value[0])
+                                  }
+                                >
+                                  InActive
+                                </button>
+                              )}
+                            </td>
+                            <td className="">
+                              <button
+                                onClick={(e) => editProduct(e, value[0])}
+                                className="m-2 AiFillEdit "
+                              >
+                                <AiFillEdit />
+                              </button>
+                              <button
+                                className="m-2 BsTrash"
+                                onClick={() => deleteProduct(value[0])}
+                              >
+                                <BsTrash />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td className="text-center" colSpan={6}>
+                            <h3 className="bold text-danger">
+                              No Product Found
+                            </h3>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody>
-            {product.length > 0 ? (
-              product?.map((value, key) => (
-                <tr key={key}>
-                  <th scope="row">{value[0]}</th>
-                  <td>{value[1]}</td>
-                  <td>{value[2]}</td>
-                  <td>
-                    <img
-                      className="img-50 me-2"
-                      src={"../src/assets/productImages/" + value[3]}
-                    ></img>
-                  </td>
-                  <td>{value[4]}</td>
-                  <td>{value[5]}</td>
-                  <td>{value[6]}</td>
-                  <td key={value[8]}>
-                    {value[8] == 1 ? (
-                      <button
-                        className="btn btn-success"
-                        onClick={(e) => updateProductStatus(e, 0, value[0])}
-                      >
-                        Active
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-danger"
-                        onClick={(e) => updateProductStatus(e, 1, value[0])}
-                      >
-                        InActive
-                      </button>
-                    )}
-                  </td>
-                  <td className="">
+                      )}
+                    </tbody>
 
-                 
-                    <button
-                      onClick={(e) => editProduct(e, value[0])}
-                      className="m-2 AiFillEdit "
+                    <Modal show={show} onHide={handleClose} size="lg">
+                      <Modal.Header closeButton>
+                        <Modal.Title>Edit Product</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <form>
+                          <div className="form-group mb-3">
+                            <label className="form-label">Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={productName}
+                              onChange={handleProductName}
+                            />
+                          </div>
+
+                          <div className="form-group mb-3">
+                            <label className="form-label">Description</label>
+                            <textarea
+                              className="form-control"
+                              value={productDesc}
+                              onChange={handleProductDesc}
+                              rows="3"
+                            />
+                          </div>
+
+                          <div className="form-group mb-3">
+                            <label className="form-label">Image</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              onChange={(e) =>
+                                setSelectedFile(e.target.files[0])
+                              }
+                            />
+                          </div>
+
+                          <div className="form-group mb-3">
+                            <label className="form-label">Price</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={productPrice}
+                              onChange={handlePrice}
+                            />
+                          </div>
+
+                          <div className="form-group mb-3">
+                            <label className="form-label">Category</label>
+                            <select
+                              className="form-control"
+                              required
+                              onChange={handleCategory}
+                            >
+                              <option value="" disabled selected>
+                                Select Category
+                              </option>
+                              {category?.map((value, key) => (
+                                <option key={key} value={value[0]}>
+                                  {value[1]}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="form-group mb-3">
+                            <label className="form-label">Rating</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={rating}
+                              onChange={handleRating}
+                            />
+                          </div>
+                        </form>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                          Close
+                        </Button>
+                        <Button variant="primary" onClick={saveEdit}>
+                          Save Changes
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+
+                    <Modal
+                      show={showAddProduct}
+                      onHide={handleCloseAddProduct}
+                      size="lg"
                     >
-                      <AiFillEdit />
-                    </button>
-                    <button
-                      className="m-2 BsTrash"
-                      onClick={() => deleteProduct(value[0])}
-                    >
-                      <BsTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td className="text-center" colSpan={6}>
-                  <h3 className="bold text-danger">No Product Found</h3>
-                </td>
-              </tr>
-            )}
-          </tbody>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Add Product</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <form>
+                          <div className="form-group mb-3">
+                            <label className="form-label">Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={productName}
+                              onChange={handleProductName}
+                            />
+                          </div>
 
+                          <div className="form-group mb-3">
+                            <label className="form-label">Description</label>
+                            <textarea
+                              className="form-control"
+                              value={productDesc}
+                              onChange={handleProductDesc}
+                              rows="3"
+                            />
+                          </div>
 
+                          <div className="form-group mb-3">
+                            <label className="form-label">Image</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              onChange={handleProductImg}
+                            />
+                          </div>
 
+                          <div className="form-group mb-3">
+                            <label className="form-label">Price</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={productPrice}
+                              onChange={handlePrice}
+                            />
+                          </div>
 
-          <Modal show={show} onHide={handleClose} size="lg">
-  <Modal.Header closeButton>
-    <Modal.Title>Edit Product</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <form>
-      <div className="form-group mb-3">
-        <label className="form-label">Name</label>
-        <input
-          type="text"
-          className="form-control"
-          value={productName}
-          onChange={handleProductName}
-        />
-      </div>
+                          <div className="form-group mb-3">
+                            <label className="form-label">Category</label>
+                            <select
+                              className="form-control"
+                              required
+                              onChange={handleCategory}
+                            >
+                              <option value="" disabled selected>
+                                Select Category
+                              </option>
+                              {category?.map((value, key) => (
+                                <option key={key} value={value[0]}>
+                                  {value[1]}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
 
-      <div className="form-group mb-3">
-        <label className="form-label">Description</label>
-        <textarea
-          className="form-control"
-          value={productDesc}
-          onChange={handleProductDesc}
-          rows="3"
-        />
-      </div>
-{/* 
-      <div className="form-group mb-3">
-        <label className="form-label">Image </label>
-        <input
-          type="file"
-          className="form-control"
-       value={'../assets/s' + productImg}
-          placeholder={productImg}
-          onChange={handleProductImg}
-        />
-      </div> */}
+                          <div className="form-group mb-3">
+                            <label className="form-label">Rating</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={rating}
+                              onChange={handleRating}
+                            />
+                          </div>
 
-      <div className="form-group mb-3">
-        <label className="form-label">Price</label>
-        <input
-          type="number"
-          className="form-control"
-          value={productPrice}
-          onChange={handlePrice}
-        />
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Category</label>
-        <select
-          className="form-control"
-          required
-          onChange={handleCategory}
-        >
-          <option value="" disabled selected>
-            Select Category
-          </option>
-          {category?.map((value, key) => (
-            <option key={key} value={value[0]}>
-              {value[1]}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Rating</label>
-        <input
-          type="number"
-          className="form-control"
-          value={rating}
-          onChange={handleRating}
-        />
-      </div>
-    </form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleClose}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={saveEdit}>
-      Save Changes
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-<Modal show={showAddProduct} onHide={handleCloseAddProduct} size="lg">
-  <Modal.Header closeButton>
-    <Modal.Title>Add Product</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <form>
-      <div className="form-group mb-3">
-        <label className="form-label">Name</label>
-        <input
-          type="text"
-          className="form-control"
-          value={productName}
-          onChange={handleProductName}
-        />
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Description</label>
-        <textarea
-          className="form-control"
-          value={productDesc}
-          onChange={handleProductDesc}
-          rows="3"
-        />
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Image</label>
-        <input
-          type="file"
-          className="form-control"
-          onChange={handleProductImg}
-        />
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Price</label>
-        <input
-          type="number"
-          className="form-control"
-          value={productPrice}
-          onChange={handlePrice}
-        />
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Category</label>
-        <select
-          className="form-control"
-          required
-          onChange={handleCategory}
-        >
-          <option value="" disabled selected>
-            Select Category
-          </option>
-          {category?.map((value, key) => (
-            <option key={key} value={value[0]}>
-              {value[1]}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group mb-3">
-        <label className="form-label">Rating</label>
-        <input
-          type="number"
-          className="form-control"
-          value={rating}
-          onChange={handleRating}
-        />
-      </div>
-
-      <div className="form-check form-switch mb-3">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="flexSwitchCheckDefault"
-          checked
-          value={1}
-        />
-        <label
-          className="form-check-label"
-          htmlFor="flexSwitchCheckDefault"
-        >
-          Status
-        </label>
-      </div>
-    </form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseAddProduct}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={addSaveProduct}>
-      Save Changes
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-</table>
-</div>
-</div>
-
-    </div>
-     
-      </div>
-      </div>
+                          <div className="form-check form-switch mb-3">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              role="switch"
+                              id="flexSwitchCheckDefault"
+                              checked
+                              value={1}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="flexSwitchCheckDefault"
+                            >
+                              Status
+                            </label>
+                          </div>
+                        </form>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button
+                          variant="secondary"
+                          onClick={handleCloseAddProduct}
+                        >
+                          Close
+                        </Button>
+                        <Button variant="primary" onClick={addSaveProduct}>
+                          Save Changes
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </Sidebar>
   );
